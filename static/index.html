@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>科学吃鸡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/openlayers@4.6.4/dist/ol.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
+  <link rel="stylesheet" href="./app.css" />
+
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/openlayers"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="projection.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="sidenav">
+      <section class="section">
+        <h1 class="title">科学吃鸡</h1>
+        <p class="subtitle">胜者即是<strong>正义</strong>!</p>
+        <!-- <div class="field is-grouped">
+          <a class="button is-small">Button</a>
+          <a class="button is-small">Button2</a>
+        </div> -->
+        <label class="label">地图:</label>
+        <input type="radio" id="erangel" value="erangel" v-model="mapType">
+        <label for="erangel">小岛</label>
+        <input type="radio" id="miramar" value="miramar" v-model="mapType">
+        <label for="miramar">沙漠</label>
+        <br>
+        <br>
+        <label class="label">上帝视角选项:</label>
+        <input type="checkbox" id="followme" v-model="followMe">
+        <label for="followme">Follow Me</label>
+        <br>
+        <input type="checkbox" id="showbox" v-model="showBox">
+        <label for="showbox">显示盒子</label>
+        <br>
+        <input type="checkbox" id="showairdrop" v-model="showAirDrop">
+        <label for="showairdrop">显示空投</label>
+        <br>
+        <input type="checkbox" id="showcar" v-model="showCar">
+        <label for="showcar">显示载具</label>
+        <br>
+        <br>
+        <label class="label" v-on:dblclick="showNoItems">物品显示选项:</label>
+        <input type="checkbox" id="showitemtop" v-model="showItemTop">
+        <label for="showitemtop">不容错过</label>
+        <br>
+        <input type="checkbox" id="showitemduo" v-model="showItemDuoDuo">
+        <label for="showitemduo">多多益善</label>
+        <br>
+        <input type="checkbox" id="showitembasic" v-model="showItemBasic">
+        <label for="showitembasic">基本装备</label>
+        <br>
+        <input type="checkbox" id="showitemar" v-model="showItemAR">
+        <label for="showitemar">步枪相关</label>
+        <input type="checkbox" id="showitemsr" v-model="showItemSR">
+        <label for="showitemsr">狙击相关</label>
+        <br>
+        <input type="checkbox" id="showitemhealth" v-model="showItemHealth">
+        <label for="showitemhealth">医疗</label>
+        <input type="checkbox" id="showitemthrow" v-model="showItemThrow">
+        <label for="showitemthrow">投掷</label>
+        <input type="checkbox" id="showitemammo" v-model="showItemAmmo">
+        <label for="showitemammo">子弹</label>
+        <br>
+        <input type="checkbox" id="showitemall" v-model="showItemAll">
+        <label for="showitemall">全部</label>
+        <hr>
+        <a class="button is-small" @click="setFPS(1)">fps1</a>
+        <a class="button is-small" @click="setFPS(2)">fps2</a>
+        <a class="button is-small" @click="setFPS(4)">fps4</a>
+        <!-- <a class="button is-small" @click="toggleRefresh">{{ toggleButtonText }}</a>
+        <br> -->
+        <br>
+        <br>
+        <span>游戏开始: {{ gameStartTime }}</span>
+        <br>
+        <span>最新状态: {{ lastPacketTime }}</span>
+        <br>
+        <span>{{ coordinate }}</span>
+      </section>
+
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

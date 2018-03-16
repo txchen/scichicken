@@ -1,0 +1,11 @@
+{
+  "port": 20087,
+  "serve": "static",
+  "watchexps": [
+    "static/**"
+  ],
+  "proxy": "http://localhost:20086",
+  "proxypaths": [
+   "/api"
+  ]
+}
