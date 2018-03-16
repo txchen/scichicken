@@ -75,6 +75,8 @@ LOGLEVEL=warn node test-getcmd-pcapfile.js '/yourdir/yourpcapfile.pcap'
 
 ## UI tuning
 
+Current UI is in Chinese, it should be pretty straightforward to change to any language.
+
 Once you have the correct data in gamestate.js, the rest work like UI stuff is all easy shit. This project uses openlayers v4 to draw the map UI. You can use a pcapfile with playback mode, fast forward to a point, and then adjust UI elements.
 
 Check out the `npm run fedev` script, it will auto refresh the UI when you change app.js.
