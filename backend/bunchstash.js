@@ -49,7 +49,16 @@ const bunchStash = {
           return [{ type: CONSTS.EventTypes.GAMESTOP, time: inputEvent.time }]
         }
         const messageType = bunch.uebuffer.readUInt8()
-        if (messageType === 1 /* NMT_Welcome, only care about this */) {
+        if (messageType === 0 /* NMT_Hello */) {
+          const IsLittleEndian = bunch.uebuffer.readUInt8()
+          const RemoteNetworkVersion = bunch.uebuffer.readUInt32()
+          const EncryptionToken = bunch.uebuffer.readString()
+          if (EncryptionToken.length === 24) {
+            return [{ type: CONSTS.EventTypes.ENCRYPTIONKEY, time: inputEvent.time, data: { EncryptionToken } }]
+          } else {
+            return null
+          }
+        } else if (messageType === 1 /* NMT_Welcome */) {
           const map = bunch.uebuffer.readString()
           const gameMode = bunch.uebuffer.readString()
           const unknown = bunch.uebuffer.readString()

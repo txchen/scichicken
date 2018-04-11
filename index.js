@@ -21,7 +21,7 @@ Example: node index.js playback '/SOME/COOL/DIR/pubg-game1.pcap' | pino
 function startWebServer () {
   const apiServerPort = 20086
   backend.listen(apiServerPort, () => {
-    console.log('科学吃鸡 listening on http://localhost:' + apiServerPort)
+    console.log('Scientific Chicken Dinner listening on http://localhost:' + apiServerPort)
   })
 }
 
@@ -55,46 +55,44 @@ function main () {
       const rawPacketData = capBuffer.slice(0, nbytes)
       // one packet can generate 1 or 0 event
       const result = parser.parse(rawPacketData, new Date().getTime(), pIndex)
-      if (result) {
+      if (result != null) {
         // result can only be UEBunch event
         const l2Evts = bunchStash.feedEvent(result)
         if (l2Evts) {
           for (const l2Evt of l2Evts) {
-            gamestate.processPUBGEvent(l2Evt)
+            if (l2Evt.type === CONSTS.EventTypes.ENCRYPTIONKEY) {
+              console.log(`Got EncryptionToken ${l2Evt.data.EncryptionToken}`)
+              parser.setEncryptionToken(l2Evt.data.EncryptionToken)
+            } else {
+              if (l2Evt.type === CONSTS.EventTypes.GAMESTOP) {
+                parser.clearEncryptionToken()
+              }
+              gamestate.processPUBGEvent(l2Evt)
+            }
           }
         }
       }
     })
+    
     startWebServer()
   } else if (args[0] === 'playback') {
     const parser = PacketParser()
     // read the file and get all the events out first
     const pbyp = PacketByPacket(args[1])
-    const allEvents = []
+    const finalEvents = []
     pbyp.on('packet', packet => {
-      // packet contains { header, data }
       const result = parser.parse(packet.data, packet.header.timestamp)
       if (result != null) {
-        allEvents.push(result)
-      }
-    })
-    pbyp.on('error', err => {
-      console.log('ERROR happened during parsing the pcap file', err)
-    })
-    pbyp.on('end', result => {
-      console.log('pcap file processing finished.', result)
-      console.log(`Got ${allEvents.length} layer-1 events.`)
-      if (allEvents.length > 0) {
-        console.log(
-          `Time range: ${utils.toLocalISOString(allEvents[0].time)} -> ${utils.toLocalISOString(allEvents[allEvents.length - 1].time)}`
-        )
-        // we have SelfLoc and UEBunches now, need to process the 2nd pass
-        const finalEvents = []
-        for (const l1Evt of allEvents) {
-          const l2Evts = bunchStash.feedEvent(l1Evt)
-          if (l2Evts) {
-            for (const l2Evt of l2Evts) {
-              if (l2Evt.type === CONSTS.EventTypes.GAMESTART) {
+        const l2Evts = bunchStash.feedEvent(result)
+        if (l2Evts) {
+          for (const l2Evt of l2Evts) {
+            if (l2Evt.type === CONSTS.EventTypes.ENCRYPTIONKEY) {
+              console.log(`Got EncryptionToken ${l2Evt.data.EncryptionToken}`)
+              parser.setEncryptionToken(l2Evt.data.EncryptionToken)
+            } else {
+              if (l2Evt.type === CONSTS.EventTypes.GAMESTOP) {
+                parser.clearEncryptionToken()
+              } else if (l2Evt.type === CONSTS.EventTypes.GAMESTART) {
                 // reset the state, so that stash can process further games
                 gamestate.resetGameState()
               }
@@ -102,11 +100,19 @@ function main () {
             }
           }
         }
-        console.log(`Got ${finalEvents.length} layer-2 events.`)
+      }
+    })
+    pbyp.on('error', err => {
+      console.log('ERROR happened during parsing the pcap file', err)
+    })
+    pbyp.on('end', result => {
+      console.log('pcap file processing finished.', result)
+      if (finalEvents.length > 0) {
         // now set the mode to playback and start the api server
         gamestate.setPlaybackMode(finalEvents)
         printStateOnConsole()
         startWebServer()
+        gamestate.startPlayback(1.0, finalEvents.length)
       }
     })
     pbyp.resume()

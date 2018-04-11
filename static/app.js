@@ -88,10 +88,10 @@ vapp = new Vue({
     toggleRefresh () {
       if (appData.autoRefresh) {
         appData.autoRefresh = false
-        this.toggleButtonText = '开始刷新'
+        this.toggleButtonText = 'Start Refresh'
       } else {
         appData.autoRefresh = true
-        this.toggleButtonText = ' 停止刷新'
+        this.toggleButtonText = ' Stop Refresh'
       }
     },
     setFPS (fps) {

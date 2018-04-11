@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>科学吃鸡</title>
+  <title>Scientific Chicken Dinner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://unpkg.com/openlayers@4.6.4/dist/ol.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
@@ -18,68 +18,68 @@
   <div id="app">
     <div class="sidenav">
       <section class="section">
-        <h1 class="title">科学吃鸡</h1>
-        <p class="subtitle">胜者即是<strong>正义</strong>!</p>
+        <h1 class="title">Scientific Chicken Dinner</h1>
+        <p class="subtitle">Winners are <strong>victorious</strong>!</p>
         <!-- <div class="field is-grouped">
           <a class="button is-small">Button</a>
           <a class="button is-small">Button2</a>
         </div> -->
-        <label class="label">地图:</label>
+        <label class="label">Map:</label>
         <input type="radio" id="erangel" value="erangel" v-model="mapType">
-        <label for="erangel">小岛</label>
+        <label for="erangel">Erangel</label>
         <input type="radio" id="miramar" value="miramar" v-model="mapType">
-        <label for="miramar">沙漠</label>
+        <label for="miramar">Miramar</label>
         <br>
         <br>
-        <label class="label">上帝视角选项:</label>
+        <label class="label">Map Options:</label>
         <input type="checkbox" id="followme" v-model="followMe">
         <label for="followme">Follow Me</label>
         <br>
         <input type="checkbox" id="showbox" v-model="showBox">
-        <label for="showbox">显示盒子</label>
+        <label for="showbox">Death Crates</label>
         <br>
         <input type="checkbox" id="showairdrop" v-model="showAirDrop">
-        <label for="showairdrop">显示空投</label>
+        <label for="showairdrop">Air Drop</label>
         <br>
         <input type="checkbox" id="showcar" v-model="showCar">
-        <label for="showcar">显示载具</label>
+        <label for="showcar">Vehicles</label>
         <br>
         <br>
-        <label class="label" v-on:dblclick="showNoItems">物品显示选项:</label>
+        <label class="label" v-on:dblclick="showNoItems">Item Options:</label>
         <input type="checkbox" id="showitemtop" v-model="showItemTop">
-        <label for="showitemtop">不容错过</label>
+        <label for="showitemtop">Level 3</label>
         <br>
         <input type="checkbox" id="showitemduo" v-model="showItemDuoDuo">
-        <label for="showitemduo">多多益善</label>
+        <label for="showitemduo">Level 2</label>
         <br>
         <input type="checkbox" id="showitembasic" v-model="showItemBasic">
-        <label for="showitembasic">基本装备</label>
+        <label for="showitembasic">Level 1</label>
         <br>
         <input type="checkbox" id="showitemar" v-model="showItemAR">
-        <label for="showitemar">步枪相关</label>
+        <label for="showitemar">AR-Related</label>
         <input type="checkbox" id="showitemsr" v-model="showItemSR">
-        <label for="showitemsr">狙击相关</label>
+        <label for="showitemsr">SR-Related</label>
         <br>
         <input type="checkbox" id="showitemhealth" v-model="showItemHealth">
-        <label for="showitemhealth">医疗</label>
+        <label for="showitemhealth">Meds</label>
         <input type="checkbox" id="showitemthrow" v-model="showItemThrow">
-        <label for="showitemthrow">投掷</label>
+        <label for="showitemthrow">Throwables</label>
         <input type="checkbox" id="showitemammo" v-model="showItemAmmo">
-        <label for="showitemammo">子弹</label>
+        <label for="showitemammo">Ammo</label>
         <br>
         <input type="checkbox" id="showitemall" v-model="showItemAll">
-        <label for="showitemall">全部</label>
+        <label for="showitemall">All</label>
         <hr>
         <a class="button is-small" @click="setFPS(1)">fps1</a>
-        <a class="button is-small" @click="setFPS(2)">fps2</a>
-        <a class="button is-small" @click="setFPS(4)">fps4</a>
+        <a class="button is-small" @click="setFPS(5)">fps5</a>
+        <a class="button is-small" @click="setFPS(15)">fps15</a>
         <!-- <a class="button is-small" @click="toggleRefresh">{{ toggleButtonText }}</a>
         <br> -->
         <br>
         <br>
-        <span>游戏开始: {{ gameStartTime }}</span>
+        <span>Game Start: {{ gameStartTime }}</span>
         <br>
-        <span>最新状态: {{ lastPacketTime }}</span>
+        <span>Last Packet: {{ lastPacketTime }}</span>
         <br>
         <span>{{ coordinate }}</span>
       </section>

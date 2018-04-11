@@ -25,6 +25,7 @@ module.exports = {
     // bunch process -> new event
     SELFLOCEX: Symbol('SelfLocEx'),
     CARSYNC: Symbol('CarSync'),
+    ENCRYPTIONKEY: Symbol('EncryptionKey'),
     GAMESTART: Symbol('GameStart'),
     GAMESTOP: Symbol('GameStop'),
     ACTOROPEN: Symbol('ActorOpen'),
