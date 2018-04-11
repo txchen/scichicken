@@ -1,6 +1,6 @@
 # Sci Chicken
 
-A PUBG pcap playback system that does not hog CPU/GPU, works with version 3.7.19.
+A PUBG pcap playback system that does not hog CPU/GPU, works with version 3.7.27.26.
 
 ## Sniff
 
