@@ -3,6 +3,7 @@ html,
 #app,
 body {
   height: 100%
+  color:#E53333 !important
 }
 html { overflow-y: hidden; }
 
