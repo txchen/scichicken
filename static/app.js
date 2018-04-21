@@ -32,9 +32,9 @@ vapp = new Vue({
 
     showItemTop: true,
     showItemDuoDuo: true,
-    showItemBasic: true,
-    showItemAR: false,
-    showItemSR: false,
+    showItemBasic: false,
+    showItemAR: true,
+    showItemSR: true,
     showItemHealth: false,
     showItemThrow: false,
     showItemAmmo: false,
