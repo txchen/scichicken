@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>云雷达</title>
+  <title>超级云雷达</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://unpkg.com/openlayers@4.6.4/dist/ol.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
@@ -18,9 +18,8 @@
   <div id="app">
     <div class="sidenav">
       <section class="section">
-        <h1 class="title">云雷达 4.21</h1>
-        <p class="subtitle">作者qq <strong>10940638</strong>!</p>
-        <!-- <div class="field is-grouped">
+        <h1 class="title"><b>超级云雷达</b></h1>
+          <!-- <div class="field is-grouped">
           <a class="button is-small">Button</a>
           <a class="button is-small">Button2</a>
         </div> -->
@@ -56,10 +55,10 @@
         <label for="showitembasic">1级物品</label>
         <br>
         <input type="checkbox" id="showitemar" v-model="showItemAR">
-        <label for="showitemar">自动步枪相关</label>
+        <label for="showitemar">步枪相关</label>
 		<br>
         <input type="checkbox" id="showitemsr" v-model="showItemSR">
-        <label for="showitemsr">狙击步枪相关</label>
+        <label for="showitemsr">狙击相关</label>
         <br>
         <input type="checkbox" id="showitemhealth" v-model="showItemHealth">
         <label for="showitemhealth">药品</label>
@@ -71,11 +70,12 @@
         <input type="checkbox" id="showitemall" v-model="showItemAll">
         <label for="showitemall">所有</label>
         <hr>
-        <a class="button is-small" @click="setFPS(5)">fps5</a>
-        <a class="button is-small" @click="setFPS(15)">fps15</a>
-        <a class="button is-small" @click="setFPS(30)">fps30</a>
-        <!-- <a class="button is-small" @click="toggleRefresh">{{ toggleButtonText }}</a>
-        <br> -->
+        <a class="button is-small" @click="setFPS(30)">FPS30</a>
+        <a class="button is-small" @click="setFPS(40)">FPS40</a>
+        <a class="button is-small" @click="setFPS(50)">FPS50</a>
+        <a class="button is-small" @click="setFPS(60)">FPS60</a>
+         <!-- <a class="button is-small"@click=" toggleRefresh">{{ toggleButtonText }}</a>
+        <br>-->
         <br>
         <br>
         <span>Game Start: {{ gameStartTime }}</span>
