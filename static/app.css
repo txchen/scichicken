@@ -15,12 +15,13 @@ html { overflow-y: hidden; }
   top: 0; /* Stay at the top */
   left: 0;
   /* background-color: #00695C; */
+  background-color:transparent
   overflow-x: hidden; /* Disable horizontal scroll */
 }
 
 /* Style page content */
 #map {
-  margin-left: 225px;
+  margin-left: 0px;
   height: 100%;
   background-color: lightgray;
 }
