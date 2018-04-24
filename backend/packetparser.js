@@ -1,48 +1,93 @@
 const CONSTS = require('./constants')
 const decoders = require('cap').decoders
-const PROTOCOL = decoders.PROTOCOL
 const UEBuffer = require('./uebuffer')
 const logger = require('./logger')
 const Bunch = require('./bunch')
+const crypto = require('crypto');
 
 const allsame = input => {
   return input === 255 || input === 0
 }
 
 const packetParserProto = {
+  EncryptionToken: '',
+  haveEncryptionToken: false,
+
+  readRawBit (rawPacket, posBits) {
+    const SHIFTS = [1, 2, 4, 8, 16, 32, 64, 128]
+    const b = rawPacket[posBits >> 3] & SHIFTS[posBits & 0b0111] // x & 0111 means x % 8 -> 0..7
+    return b != 0
+  },
+
   // server 7000..7999 -> Game PC packet, UDP. Contains a set of bunches to a certain channel
   parseUEBunchPacket (rawPacket, payloadLength, pindex, isOutTraffic) {
     if (!payloadLength) {
       return
     }
-    const buf = UEBuffer(rawPacket)
+    let buf = UEBuffer(rawPacket)
     buf.skipBits(42 * 8) // skip to udp payload
     // The end of packet might still have udp padding, so use payloadLength
     buf.remainingBits = payloadLength * 8
     buf._localRemainingBits = payloadLength * 8
 
-    if (!isOutTraffic || isOutTraffic) {
-      // adjust size, according to NetConnection.cpp:701
-      let lastByte = buf.buffer[41 + payloadLength]
-      if (lastByte > 0) {
-        // NOTE: UE4 code is remainingBitss - 1, I changed to 2, maybe PUBG modified this
-        let finalBitSize = buf.remainingBits - 2
-        while ((lastByte & 0x80) === 0) {
-          lastByte = lastByte * 2
-          finalBitSize--
+    let IsHandshake = this.readRawBit(rawPacket, (42 * 8))
+    if (IsHandshake) {
+      return null
+    }
+    let IsEncrypted = this.readRawBit(rawPacket, (42 * 8) + 1)
+
+    // adjust size, according to NetConnection.cpp:701
+    let lastByte = buf.buffer[41 + payloadLength] & 0xFF
+    if (lastByte > 0) {
+      // NOTE: UE4 code is remainingBitss - 1, I changed to 2, maybe PUBG modified this
+      let finalBitSize = (payloadLength * 8) - (IsEncrypted ? 1 : 2)
+      while ((lastByte & 0x80) === 0) {
+        lastByte = lastByte * 2
+        finalBitSize--
+      }
+      buf.remainingBits = finalBitSize
+      buf._localRemainingBits = finalBitSize
+    } else {
+      logger.fatal('Got 0 in last byte of udp payload, which looks wrong')
+      return
+    }
+
+    IsHandshake = buf.readBit()
+    IsEncrypted = buf.readBit()
+
+    if (IsEncrypted && !this.haveEncryptionToken) {
+      //logger.warn('Got encrypted packet but don\'t have EncryptionToken')
+      return null
+    } else if (IsEncrypted && this.haveEncryptionToken) {
+      const nonce = new Buffer(buf.readBits(96))
+      const tag = new Buffer(buf.readBits(128))
+      const ciphertext = new Buffer(buf.readBits(buf.remainingBits))
+      const cipher = crypto.createDecipheriv('aes-192-gcm', this.EncryptionToken, nonce);
+      cipher.setAuthTag(tag)
+      try {
+        let decryptedRaw = cipher.update(ciphertext)
+        decryptedRaw = Buffer.concat([decryptedRaw, cipher.final()]);
+        lastByte = decryptedRaw[decryptedRaw.length - 1] & 0xFF
+        if (lastByte > 0) {
+          // NOTE: UE4 code is remainingBitss - 1, I changed to 2, maybe PUBG modified this
+          finalBitSize = (decryptedRaw.length * 8) - 2
+          while ((lastByte & 0x80) === 0) {
+            lastByte = lastByte * 2
+            finalBitSize--
+          }
+          buf = UEBuffer(decryptedRaw)
+          buf.remainingBits = finalBitSize
+          buf._localRemainingBits = finalBitSize
+        } else {
+          logger.fatal('Got 0 in last byte of udp payload, which looks wrong')
+          return
         }
-        buf.remainingBits = finalBitSize
-        buf._localRemainingBits = finalBitSize
-      } else {
-        logger.fatal('Got 0 in last byte of udp payload, which looks wrong')
-        return
+      } catch (ex) {
+        logger.warn('Missed decrypting packet')
+        return null
       }
     }
 
-    if (buf.readBit() || buf.readBit()) {
-      logger.warn({ pindex }, 'Got handshake or encrypted.')
-      return null // 1st 2nd bit -> handshake or encrypted
-    }
     // this is Unreal packet id, 15 bit
     const packetId = buf.readInt(CONSTS.MAX_PACKETID)
     const event = { type: CONSTS.EventTypes.UEBUNCHES, valid: true, uepid: packetId, totalBunchesBits: buf.remainingBits, data: [] }
@@ -99,6 +144,7 @@ const packetParserProto = {
       const chType = bReliable || bOpen
         ? buf.readInt(CONSTS.CHTYPE_MAX)
         : CONSTS.CHTYPE_NONE // when it is not Open or reliable, type = none
+
       const bunchDataBits = buf.readInt(CONSTS.MAX_BUNCH_DATA_BITS)
       let preLeft = buf.remainingBits
       if (bunchDataBits > preLeft) {
@@ -111,26 +157,27 @@ const packetParserProto = {
       // END OF getting bunch header, now get bunch data
       if (chType > 4) {
         logger.fatal({ pindex, chType }, 'Got unknown channel type')
+        return null
       }
       // ignore file and voice and unknown channel type
-      if (chType === CONSTS.CHTYPE_FILE || chType === CONSTS.CHTYPE_VOICE || chType > 4) {
+      if (chType === CONSTS.CHTYPE_FILE || chType === CONSTS.CHTYPE_VOICE) {
         buf.skipBits(bunchDataBits)
         continue
       }
       // assume -> control channel always got channel index = 0
       if (chType === CONSTS.CHTYPE_CONTROL) {
-        if (isOutTraffic) {
-          // for outTraffic, we dont care control channel
-          buf.skipBits(bunchDataBits)
-          continue
-        }
+        //if (isOutTraffic) {
+        //  // for outTraffic, we dont care control channel
+        //  buf.skipBits(bunchDataBits)
+        //  continue
+        //}
         if (chIndex !== 0 && !isOutTraffic) {
           logger.fatal({ chIndex, pindex }, 'Found non-zero Index CONTROL CHANNEL, not good!')
           buf.skipBits(bunchDataBits)
           continue
         }
       }
-
+      
       // if we are here, we can assume the bunch is valid, bunch can be partial
       //   since bunch might be stashed for a while, we need to copy bits from the current Buffer
       event.data.push(Bunch(bunchDataBits,
@@ -149,7 +196,7 @@ const packetParserProto = {
       14 /* ether header length offset */
     )
     let result = null
-    if (ipv4Info.info.protocol === PROTOCOL.IP.UDP) {
+    if (ipv4Info.info.protocol === decoders.PROTOCOL.IP.UDP) {
       const udpInfo = decoders.UDP(rawPacket, ipv4Info.offset)
       if (udpInfo.info.srcport >= 7000 && udpInfo.info.srcport <= 7999) {
         // the actor bunch packets, sent by channels
@@ -162,6 +209,18 @@ const packetParserProto = {
       result.time = time
     }
     return result
+  },
+  
+  setEncryptionToken (EncryptionToken) {
+    if (!this.haveEncryptionToken) {
+      this.EncryptionToken = EncryptionToken
+      this.haveEncryptionToken = true
+    }
+  },
+  
+  clearEncryptionToken () {
+    this.haveEncryptionToken = false
+    this.EncryptionToken = ''
   }
 }
 

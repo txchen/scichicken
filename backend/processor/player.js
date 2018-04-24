@@ -170,194 +170,194 @@ function processPlayer (buf, actor, repObj, waitingHandle, dataOut, iteration) {
       break
     // ATslCharacter
     case 45:
-      buf.readInt(8)
+      buf.readInt(8) // Remote_CastAnim
       break
     case 46:
-      buf.readBit()
+      buf.readBit() // CurrentWeaponZoomLevel
       break
     case 47:
-      buf.readFloat()
+      buf.readFloat() // BuffFinalSpreadFactor
       break
     case 48:
-      buf.readObject()
+      buf.readObject() // InventoryFacade
       break
     case 49:
-      buf.readObject()
+      buf.readObject() // WeaponProcessor
       break
     case 50:
-      buf.readByte()
+      buf.readByte() // CharacterState
       break
     case 51:
-      buf.readBit()
+      buf.readBit() // bIsScopingRemote
       break
     case 52:
-      buf.readBit()
+      buf.readBit() // bIsAimingRemote
       break
     case 53:
-      buf.readBit()
+      buf.readBit() // bIsFirstPersonRemote
       break
     case 54:
-      buf.readBit()
+      buf.readBit() // bIsInVehicleRemote
       break
     case 55:
-      buf.readObject()
+      buf.readUInt32() // SpectatedCount
       break
     case 56:
-      buf.readFloat()
+      buf.readObject() // Team
       break
-    case 57:
-      buf.readObject()
+    case 57: // begin FTakeHitInfo
+      buf.readFloat() // ActualDamage
       break
     case 58:
-      buf.readObject()
+      buf.readObject() // DamageType
       break
     case 59:
-      buf.readVector(1, 20)
+      buf.readObject() // PlayerInstigator
       break
     case 60:
-      buf.readVector(1, 20)
+      buf.readVector(1, 20) // DamageOrigin
       break
     case 61:
-      buf.readName()
+      buf.readVector(1, 20) // RelHitLocation
       break
     case 62:
-      buf.readFloat()
+      buf.readName() // BoneName
       break
     case 63:
-      buf.readByte()
+      buf.readFloat() // DamageMaxRadius
       break
     case 64:
-      buf.readByte()
+      buf.readByte() // ShotDirPitch
       break
     case 65:
-      buf.readBit()
+      buf.readByte() // ShotDirYaw
       break
     case 66:
-      buf.readBit()
+      buf.readBit() // bPointDamage
       break
     case 67:
-      buf.readBit()
+      buf.readBit() // bRadialDamage
       break
     case 68:
-      buf.readByte()
+      buf.readBit() // bKilled
       break
     case 69:
-      buf.readName()
+      buf.readByte() // EnsureReplicationByte
       break
     case 70:
-      buf.readFloatVector()
+      buf.readName() // AttackerWeaponName
       break
     case 71:
-      buf.readInt(3)
-      break
+      buf.readFloatVector() // AttackerLocation
+      break // FTakeHitInfo end
     case 72:
-      buf.readFloat()
+      buf.readInt(3) // TargetingType
       break
     case 73:
-      buf.readBit()
+      buf.readFloat() // ReviveCastingTime
       break
     case 74:
-      buf.readBit()
+      buf.readBit() // bWantsToRun
       break
     case 75:
-      buf.readBit()
+      buf.readBit() // bWantsToSprint
       break
     case 76:
-      buf.readBit()
+      buf.readBit() // bWantsToSprintingAuto
       break
     case 77:
-      buf.readBit()
+      buf.readBit() // bWantsToRollingLeft
       break
     case 78:
-      buf.readBit()
+      buf.readBit() // bWantsToRollingRight
       break
     case 79:
-      buf.readBit()
+      buf.readBit() // bIsPeekLeft
       break
     case 80:
-      buf.readBit()
-      break
-    case 80:
-      buf.readBit()
+      buf.readBit() // bIsPeekRight
       break
     case 81:
-      buf.readBit()
+      buf.readBit() // IgnoreRotation
       break
     case 82:
-      buf.readBit()
+      buf.readBit() // bIsGroggying
       break
     case 83:
-      buf.readBit()
+      buf.readBit() // bIsThirdPerson
       break
     case 84:
-      buf.readBit()
+      buf.readBit() // bIsReviving
       break
     case 85:
-      buf.readBit()
+      buf.readBit() // bIsWeaponObstructed
       break
     case 86:
-      buf.readBit()
+      buf.readBit() // bIsCoatEquipped
       break
     case 87:
-      buf.readBit()
+      buf.readBit() // bIsZombie
       break
     case 88:
-      buf.readBit()
+      buf.readBit() // bIsThrowHigh
       break
     case 89:
-      buf.readRotationShort()
+      buf.readBit() // bUseRightShoulderAiming
       break
     case 90:
-      buf.readFixedVector(1, 16)
+      buf.readRotationShort() // GunDirectionSway
       break
     case 91:
-      buf.readObject()
+      buf.readFixedVector(1, 16) // AimOffsets
       break
     case 92:
-      buf.readBit()
+      buf.readObject() // NetOwnerController
       break
     case 93:
-      buf.readBit()
+      buf.readBit() // bAimStateActive
       break
     case 94:
-      const health = buf.readFloat()
-      dataOut.health = health
+      buf.readBit() // bIsHoldingBreath
       break
     case 95:
-      buf.readBit()
+      const health = buf.readFloat() // Health
+      dataOut.health = health
       break
     case 96:
-      buf.readFloat()
+      buf.readBit() // HealthMax
       break
     case 97:
-      buf.readFloat()
+      buf.readFloat() // GroggyHealth
       break
     case 98:
-      buf.readFloat()
+      buf.readFloat() // GroggyHealthMax
       break
     case 99:
-      buf.readFloat()
+      buf.readFloat() // BoostGauge
       break
     case 100:
-      buf.readInt(8)
+      buf.readFloat() // BoostGaugeMax
       break
     case 101:
-      buf.readObject()
+      buf.readInt(8) // ShoesSoundType
       break
     case 102:
-      buf.readBit()
+      buf.readObject() // VehicleRiderComponent
       break
     case 103:
-      buf.readInt(4)
+      buf.readBit() // bIsActiveRagdollActive
       break
     case 104:
-      buf.readBit()
+      buf.readInt(4) // PreReplicatedStanceMode
       break
     case 105:
-      buf.readBit()
+      buf.readBit() // bServerFinishedVault
       break
     case 106:
-      buf.readBit()
+      buf.readBit() // bWantsToCancelVault
+      break
+    case 107:
+      buf.readBit() // bIsDemoVaulting_CP
       break
     default:
       return false
